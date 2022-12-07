@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	tgbot "github.com/go-telegram-bot-api/telegram-bot-api"
+	"log"
 )
 
 func main() {
@@ -19,8 +20,13 @@ func main() {
 		if update.Message == nil {
 			continue
 		}
-		msg := tgbot.NewMessage(update.Message.Chat.ID, "reza")
+		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+		if len(update.Message.Text) == 0 {
+			bot.DeleteMessage(tgbot.DeleteMessageConfig{update.Message.Chat.ID, update.Message.MessageID})
+		}
+		msg := tgbot.NewMessage(update.Message.Chat.ID, update.Message.Text)
+		msg.ReplyToMessageID = update.Message.MessageID
 		bot.Send(msg)
-	}
 
+	}
 }
